@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import Loginpage from "./pages/Loginpage";
 import Profilepage from "./pages/Profilepage";
 import { NeatGradient } from "@firecms/neat";
+import { useEffect, useRef } from "react";
+
 
 const App = () => {
   const canvasRef = useRef(null);
@@ -13,7 +14,7 @@ const App = () => {
     colors: [
       { color: "#2C2354", enabled: true },
       { color: "#001129", enabled: true },
-      { color: "#815ABF", enabled: true },
+      { color: "#14062b", enabled: true },
       { color: "#110614", enabled: true },
       { color: "#432877", enabled: true },
     ],
