@@ -1,6 +1,7 @@
 import message from "../models/message.js";
 import user from "../models/user.js";
-import cloudinary from "../lib/cloudinary.js"
+import cloudinary from "../lib/cloudinary.js";
+import { io, userSocketMap } from "../server.js";
 
 export const getAllUserForSideBar = async (req, res) => {
   try {
@@ -54,54 +55,68 @@ export const getMessages = async (req, res) => {
       },
     );
     res.json({
-        success: true,
-        messages
-    })
+      success: true,
+      messages,
+    });
   } catch (error) {
     console.log(error.message);
     res.json({
       success: false,
-      message: error.message
+      message: error.message,
     });
-}
+  }
 };
 
-
 export const markMessageAsSeen = async (req, res) => {
-    try {
-        const {id} = req.params;
-        await message.findByIdAndUpdate(id,{seen: true})
-        res.json({
-            success: true
-        })
-    } catch (error) {
+  try {
+    const { id } = req.params;
+    await message.findByIdAndUpdate(id, { seen: true });
+    res.json({
+      success: true,
+    });
+  } catch (error) {
     console.log(error.message);
     res.json({
       success: false,
-      message: error.message
+      message: error.message,
     });
-    }
-}
+  }
+};
 
 // Send message to selected user
 export const sendMessage = async (req, res) => {
-    try {
-        const {text, image} = req.body;
-        const receiverId = req.params.id;
-        const senderId = req.user._id;
+  try {
+    const { text, image } = req.body;
+    const receiverId = req.params.id;
+    const senderId = req.user._id;
 
-        let imageUrl;
-        if(image) {
-            const uploadResponse = await cloudinary.uploader.upload(image);
-            imgUrl = uploadResponse.secure_url;
-        }
-        const newMessage = await message.create({senderId, receiverId, text, image:imageUrl })
-        
-        res.json({
-            success: true,
-            newMessage
-        })
-    } catch (error) {
-        
+    let imageUrl;
+    if (image) {
+      const uploadResponse = await cloudinary.uploader.upload(image);
+      imgUrl = uploadResponse.secure_url;
     }
-}
+    const newMessage = await message.create({
+      senderId,
+      receiverId,
+      text,
+      image: imageUrl,
+    });
+    // Emit new message to receiver's socket
+    const receiverSocketId = userSocketMap[receiverId];
+
+    if(receiverSocketId) {
+        io.to(receiverSocketId).emit("newMessage",newMessage)
+    }
+
+    res.json({
+      success: true,
+      newMessage,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
