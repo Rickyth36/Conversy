@@ -1,8 +1,8 @@
 // Middleware to protect routes
 
 import jwt from "jsonwebtoken";
-import user from "../models/user";
-import { decode } from "punycode";
+import user from "../models/user.js";
+
 
 export const protectRoute = async(req, res, next) => {
     try {

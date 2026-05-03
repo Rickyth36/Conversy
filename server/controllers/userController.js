@@ -1,11 +1,11 @@
 // Sign up
-import { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import user from "../models/user.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../lib/utils.js";
 import cloudinary from "../lib/cloudinary.js";
 
-export const Signup = async (req, res) => {
+export const signup = async (req, res) => {
   const { fullName, email, password, bio } = req.body;
 
   try {
