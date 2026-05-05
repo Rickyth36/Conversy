@@ -4,7 +4,7 @@ import Loginpage from "./pages/Loginpage";
 import Profilepage from "./pages/Profilepage";
 import { NeatGradient } from "@firecms/neat";
 import { useEffect, useRef } from "react";
-
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const canvasRef = useRef(null);
@@ -64,12 +64,12 @@ const App = () => {
           zIndex: -1,
         }}
       />
-
-      <Routes>
-        <Route path="/" element={<Homepage />} />
-        <Route path="/login" element={<Loginpage />} />
-        <Route path="/profile" element={<Profilepage />} />
-      </Routes>
+      <Toaster />
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Loginpage />} />
+          <Route path="/profile" element={<Profilepage />} />
+        </Routes>
     </div>
   );
 };
