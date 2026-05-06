@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import axios from "axios";
-import { Children } from "react";
+
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
@@ -11,7 +11,7 @@ axios.defaults.baseURL = backendUrl;
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ Children }) => {
+export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [authUser, setAuthUser] = useState(null);
   const [onlineUser, setOnlineUser] = useState([]);
@@ -29,6 +29,7 @@ export const AuthProvider = ({ Children }) => {
       toast.error(error.message);
     }
   };
+
 
   //   Connect socket func to handle connections and online users updates
   const connectSocket = (userData) => {
@@ -59,7 +60,7 @@ export const AuthProvider = ({ Children }) => {
         toast.success(data.message);
       }
     } catch (error) {
-      toast.success(data.message);
+      toast.error(error.message);
     }
   };
 
@@ -67,23 +68,38 @@ export const AuthProvider = ({ Children }) => {
     localStorage.removeItem("token");
     setToken(null);
     setAuthUser(null);
-    setOnlineUsers([]);
+    setOnlineUser([]);
     axios.defaults.headers.common["token"] = null;
     toast.success("Logged out successfully");
-    socket.disconnect();    
+    socket?.disconnect();    
+  }
+
+  const updateProfile = async(body) => {
+     try {
+        const {data} = await axios.put("/api/auth/update-profile", body);
+        if(data.success) {
+          setAuthUser(data.user);
+          toast.success("Profile updated successfully");
+        }
+     } catch (error) {
+      toast.error(error.message)
+     }
   }
 
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common["token"] = token;
+      checkAuth();
     }
-    checkAuth();
   }, []);
   const value = {
     axios,
     authUser,
     onlineUser,
     socket,
+    login,
+    logout,
+    updateProfile
   };
-  return <AuthContext.Provider value={value}>{Children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
