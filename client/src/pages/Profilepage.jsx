@@ -1,14 +1,32 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import assets from "../assets/assets";
+import { AuthContext } from "../../context/AuthContext";
 
 const Profilepage = () => {
+
+  const {authUser, updateProfile} = useContext(AuthContext);
+
   const [image, setImage] = useState(null);
-  const [name, setName] = useState("Your name");
-  const [bio, setBio] = useState("Hi everyone I'm using Conversy");
+  const [name, setName] = useState(authUser.fullName);
+  const [bio, setBio] = useState(authUser.bio);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/");
+    if(!image) {
+      await updateProfile({fullName: name, bio});
+      navigate("/");
+      return;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      await updateProfile({
+        profilePic: base64Image, fullName: name, bio
+      })
+      navigate('/') ;
+    }
   };
 
   const navigate = useNavigate();
@@ -31,7 +49,7 @@ const Profilepage = () => {
               onChange={(e) => setImage(e.target.files[0])}
               type="file"
               id="avatar"
-              accept=".png .jpg .jpeg"
+              accept=".png,.jpg,.jpeg"
               hidden
             />
             <img
@@ -54,9 +72,10 @@ const Profilepage = () => {
           />
 
           <textarea
-            className="p-2 border bordergray-500 rounded-md focus:outline-none
+            className="p-2 border border-gray-500 rounded-md focus:outline-none
            focus:ring-2 focus:ring-violet-500"
             onChange={(e) => setBio(e.target.value)}
+            value={bio}
             rows={4}
             placeholder="Write profile bio"
             required
@@ -65,12 +84,20 @@ const Profilepage = () => {
           ></textarea>
           <button
             className="bg-linear-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full
-          text-lf cursor-pointer"
+          text-lg cursor-pointer"
             type="submit"
           >
             Save
           </button>
         </form>
+        {
+          image && 
+          <img
+            className="max-w-44 rounded-full mx-10 max-sm:mt-10"
+            src={authUser.profilePic}
+            alt=""
+          />
+        }
           {/* <img
             className="max-w-44 rounded-full mx-10 max-sm:mt-10"
             src={assets.logo_icon}

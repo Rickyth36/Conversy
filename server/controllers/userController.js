@@ -11,18 +11,18 @@ export const signup = async (req, res) => {
   try {
     if (!fullName || !email || !password || !bio) {
       return res.json({
-        sucess: false,
+        success: false,
         message: "Missing details",
       });
     }
-    const user = await user.findOne({ email });
-    if (user) {
+    const isUser = await user.findOne({ email });
+    if (isUser) {
       return res.json({
         success: false,
         message: "Account already exists",
       });
     }
-    const salt = bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = await user.create({
       fullName,
@@ -52,9 +52,16 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const userData = user.findOne({ email });
+    const userData = await user.findOne({ email });
 
-    const isPasswordCorrect = await bcrypt(password, userData.password);
+    if (!userData) {
+      return res.json({
+        success: false,
+        message: "User not found",
+      });
+    }    
+
+    const isPasswordCorrect = await bcrypt.compare(password, userData.password);
 
     if (!isPasswordCorrect) {
       return res.json({
@@ -65,7 +72,7 @@ export const login = async (req, res) => {
 
     const token = generateToken(userData._id);
 
-    req.json({
+    res.json({
       success: true,
       token,
       message: "Login successful",
@@ -98,7 +105,8 @@ export const updateProfile = async (req, res) => {
           bio,
           fullName,
         },
-        { new: true },
+        { returnDocument: "after" }
+        // { new: true },
       );
     } else {
         const upload = await cloudinary.uploader.upload(profilePic);

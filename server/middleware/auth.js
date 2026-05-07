@@ -8,14 +8,14 @@ export const protectRoute = async(req, res, next) => {
     try {
         const token = req.headers.token;
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const user = await user.findById(decoded.userId).select("-password");
-        if(!user) {
+        const isUser = await user.findById(decoded.userId).select("-password");
+        if(!isUser) {
             return res.json({
                 success: false,
                 message: "User not found"
             })
         };
-        req.user = user;
+        req.user = isUser;
         next();
     } catch (error) {
         console.log(error.message);

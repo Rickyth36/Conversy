@@ -21,7 +21,7 @@ export const userSocketMap = {}; // { userId: socketId }
 // Socket.io connection handler
 io.on("connection", (socket) => {
   const userId = socket.handshake.query.userId;
-  console.log("User connected".userId);
+  console.log("User connected",userId);
 
   if (userId) userSocketMap[userId] = socket.id;
   //   Emit online users to all connected cients
@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User disconnected", userId);
     delete userSocketMap[userId];
-    io.emit("getOnlineUsers", Object.keys(userSocketMap))
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   })
 
 });
@@ -46,6 +46,6 @@ app.use("/api/messages", messageRouter);
 // DB connect
 await connectDB();
 
-const PORT = process.env.port || 5001;
+const PORT = process.env.PORT || 5001;
 
 server.listen(PORT, () => console.log("Server is running on port:" + PORT));
