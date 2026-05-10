@@ -53,8 +53,8 @@ const Profilepage = () => {
               hidden
             />
             <img
-              className={`w-12 h-12 ${image && "rounded-full"}`}
-              src={image ? URL.createObjectURL(image) : assets.avatar_icon}
+              className={`w-12 h-12 rounded-full`}
+              src={image ? URL.createObjectURL(image) : authUser.profilePic}
               alt=""
             />{" "}
             Upload profile image
@@ -94,7 +94,7 @@ const Profilepage = () => {
           image && 
           <img
             className="max-w-44 rounded-full mx-10 max-sm:mt-10"
-            src={authUser.profilePic}
+            src={URL.createObjectURL(image)}
             alt=""
           />
         }

@@ -22,7 +22,7 @@ const App = () => {
       { color: "#110614", enabled: true },
       { color: "#432877", enabled: true },
     ],
-    speed: 1.5,
+    speed: 2,
     horizontalPressure: 4,
     verticalPressure: 4,
     waveFrequencyX: 3,

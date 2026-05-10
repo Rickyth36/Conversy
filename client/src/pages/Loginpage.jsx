@@ -27,7 +27,7 @@ const Loginpage = () => {
       justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl"
     >
       {/* left */}
-      <img src={assets.logo_big} alt="" className="w-[min(30vw,250px)]" />
+      <img src={assets.logo} alt="" className="w-[min(55vw,350px)]" />
 
       {/* right */}
       <form 

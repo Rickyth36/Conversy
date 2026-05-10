@@ -5,6 +5,8 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import io from "socket.io-client";
+import { useNavigate } from "react-router-dom";
+
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL = backendUrl;
@@ -16,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socket, setSocket] = useState(null);
+  const navigate = useNavigate();
 
   // Check is user is authenticated
   const checkAuth = async () => {
@@ -58,6 +61,7 @@ export const AuthProvider = ({ children }) => {
         setToken(data.token);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
+        navigate("/");
       }
     } catch (error) {
       toast.error(error.message);
@@ -91,7 +95,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common["token"] = token;
       checkAuth();
     }
-  }, []);
+  }, [token]);
   const value = {
     axios,
     authUser,

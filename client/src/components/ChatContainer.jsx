@@ -56,7 +56,6 @@ const ChatContainer = () => {
         <img
           src={selectedUser.profilePic || assets.avatar_icon}
           className="w-8 rounded-full"
-          src={assets.profile_martin}
           alt=""
         />
         <p className="flex-1 text-lg text-white flex items-center gap-2">
@@ -87,7 +86,7 @@ const ChatContainer = () => {
             >
               {!isMe && (
                 <img
-                  src={assets.profile_martin}
+                  src={assets.avatar_icon}
                   alt=""
                   className="w-7 h-7 rounded-full mr-2"
                 />
@@ -119,7 +118,8 @@ const ChatContainer = () => {
 
               {isMe && (
                 <img
-                  src={assets.avatar_icon}
+                  src={authUser.profilePic}
+                  // src={assets.avatar_icon}
                   alt=""
                   className="w-7 h-7 rounded-full ml-2"
                 />
