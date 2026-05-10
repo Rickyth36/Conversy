@@ -46,6 +46,11 @@ app.use("/api/messages", messageRouter);
 // DB connect
 await connectDB();
 
-const PORT = process.env.PORT || 5001;
-console.log("JWT:", process.env.JWT_SECRET);
-server.listen(PORT, () => console.log("Server is running on port:" + PORT));
+if(process.env.NODE_ENV !== "production" ) {
+  const PORT = process.env.PORT || 5001;
+  console.log("JWT:", process.env.JWT_SECRET);
+  server.listen(PORT, () => console.log("Server is running on port:" + PORT));
+}
+
+// Export server for vercel
+export default server;
