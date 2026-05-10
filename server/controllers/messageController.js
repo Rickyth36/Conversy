@@ -9,23 +9,23 @@ export const getAllUserForSideBar = async (req, res) => {
     const filteredUsers = await user
       .find({ _id: { $ne: userId } })
       .select("-password");
-    const unSeenMessages = {};
+    const unseenMessages = {};
 
     const promises = filteredUsers.map(async (user) => {
-      const messages = await Message.find({
+      const messages = await message.find({
         senderId: user._id,
         receiverId: userId,
         seen: false,
       });
       if (messages.length > 0) {
-        unSeenMessages[user._id] = messages.length;
+        unseenMessages[user._id] = messages.length;
       }
     });
     await Promise.all(promises);
     res.json({
       success: true,
       users: filteredUsers,
-      unSeenMessages,
+      unseenMessages,
     });
   } catch (error) {
     console.log(error.message);
@@ -42,7 +42,7 @@ export const getMessages = async (req, res) => {
     const { id: selectedUserId } = req.params;
     const myId = req.user._id;
 
-    const messages = await Message.find({
+    const messages = await message.find({
       $or: [
         { senderId: myId, receiverId: selectedUserId },
         { senderId: selectedUserId, receiverId: myId },
@@ -93,7 +93,7 @@ export const sendMessage = async (req, res) => {
     let imageUrl;
     if (image) {
       const uploadResponse = await cloudinary.uploader.upload(image);
-      imgUrl = uploadResponse.secure_url;
+      imageUrl = uploadResponse.secure_url;
     }
     const newMessage = await message.create({
       senderId,
